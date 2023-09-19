@@ -30,9 +30,16 @@ class Ignores:
         return ignorePrefixMatch or ignoreSuffixMatch
 
 class DirPrinter:
-    def __init__(self, path, ignorePrefixes: str, ignoreSuffixes: str):
+    def __init__(self, path, maxlevel : int,
+                 ignorePrefixes: str, ignoreSuffixes: str,
+                 textonly: bool):
+        self.maxlevel = maxlevel
         self.fullpath = os.path.abspath(path)
         self.ignores = Ignores(ignorePrefixes, ignoreSuffixes)
+        if textonly:
+            self.emojis = { "dir": "", "leaf": "" }
+        else:
+            self.emojis = {"dir": "<:palm_tree:>", "leaf": "<:four_leaf_clover:>"}
 
     def print(self):
         print("@startwbs\n")
@@ -40,15 +47,19 @@ class DirPrinter:
         self.printDir(self.fullpath)
         print("\n@endwbs")
 
-    def printDir(self, dirpath, level=2):
-        prefix = "*"*(level)
+    def printDir(self, dirpath, level=1):
+        if self.maxlevel and (level > self.maxlevel):
+            return
+        prefix = "*"*(level+1)
         for child in os.listdir(dirpath):
             if self.ignores.ignore(child):
                 continue
-            print(f"{prefix} {child}")
             fullpath = f"{dirpath}/{child}"
             if os.path.isdir(fullpath):
+                print(f"{prefix} {self.emojis['dir']} {child}")
                 self.printDir(fullpath, level+1)
+            else:
+                print(f"{prefix} {self.emojis['leaf']} {child}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="wbs_folder.py",
@@ -57,9 +68,13 @@ if __name__ == "__main__":
     # Ignore paths
     parser.add_argument('-p', "--ignoreprefix", default=None)
     parser.add_argument('-s', "--ignoresuffix", default=None)
+    parser.add_argument('-l', "--maxlevel", default=0, type=int)
+    parser.add_argument('-t', "--textonly", action='store_true')
     args = parser.parse_args()
     
     dirPrinter = DirPrinter(args.directory,
+                            args.maxlevel,
                             args.ignoreprefix,
-                            args.ignoresuffix)
+                            args.ignoresuffix,
+                            args.textonly)
     dirPrinter.print()
