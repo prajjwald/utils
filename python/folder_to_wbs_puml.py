@@ -36,30 +36,35 @@ class DirPrinter:
         self.maxlevel = maxlevel
         self.fullpath = os.path.abspath(path)
         self.ignores = Ignores(ignorePrefixes, ignoreSuffixes)
-        if textonly:
-            self.emojis = { "dir": "", "leaf": "" }
-        else:
-            self.emojis = {"dir": "<:palm_tree:>", "leaf": "<:four_leaf_clover:>"}
+        self.textonly = textonly
+        self.emojis = {"dir": "<:palm_tree:>", "leaf": "<:four_leaf_clover:>"}
+
+    def printElement(self, element, stars, isDirectory):
+        print("*"*stars, end=" ")
+        if not self.textonly:
+            emoji = self.emojis["dir"] if isDirectory else self.emojis["leaf"]
+            print(emoji, end=" ")
+        print(element)
 
     def print(self):
         print("@startwbs\n")
-        print(f"* {os.path.basename(self.fullpath)}")
+        self.printElement(os.path.basename(self.fullpath), 1, True)
         self.printDir(self.fullpath)
         print("\n@endwbs")
 
     def printDir(self, dirpath, level=1):
         if self.maxlevel and (level > self.maxlevel):
             return
-        prefix = "*"*(level+1)
         for child in os.listdir(dirpath):
             if self.ignores.ignore(child):
                 continue
+
             fullpath = f"{dirpath}/{child}"
             if os.path.isdir(fullpath):
-                print(f"{prefix} {self.emojis['dir']} {child}")
+                self.printElement(child, level+1, True)
                 self.printDir(fullpath, level+1)
             else:
-                print(f"{prefix} {self.emojis['leaf']} {child}")
+                self.printElement(child, level+1, False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="wbs_folder.py",
