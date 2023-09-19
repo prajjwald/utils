@@ -37,14 +37,14 @@ class DirPrinter:
         self.fullpath = os.path.abspath(path)
         self.ignores = Ignores(ignorePrefixes, ignoreSuffixes)
         self.textonly = textonly
-        self.emojis = {"dir": "<:palm_tree:>", "leaf": "<:four_leaf_clover:>"}
 
     def printElement(self, element, stars, isDirectory):
-        print("*"*stars, end=" ")
-        if not self.textonly:
-            emoji = self.emojis["dir"] if isDirectory else self.emojis["leaf"]
-            print(emoji, end=" ")
-        print(element)
+
+        emoji = "" if self.textonly \
+            else "<:palm_tree:> " if isDirectory \
+                else "<:four_leaf_clover:> "
+
+        print(f"{'*'*stars} {emoji}{element}")
 
     def print(self):
         print("@startwbs\n")

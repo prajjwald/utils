@@ -1,0 +1,11 @@
+@startwbs
+
+* <:palm_tree:> utils
+** <:palm_tree:> bash
+*** <:four_leaf_clover:> chrooter.sh
+** <:palm_tree:> python
+*** <:four_leaf_clover:> folder_to_wbs_puml.py
+** <:palm_tree:> output
+*** <:four_leaf_clover:> repo_overview.puml
+
+@endwbs
