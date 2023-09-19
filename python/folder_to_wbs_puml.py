@@ -8,12 +8,12 @@ class Ignores:
     def __init__(self, ignorePrefixes: str, ignoreSuffixes: str):
         # Just ignore all hidden directories for now
         self.ignorePrefixes = ignorePrefixes.split(",") if ignorePrefixes \
-            else [ '.', 'docker', 'images', 'sounds', 'docs', 'LICENSE' ]
+            else [ '.', 'docker', 'images', 'sounds', 'docs', 'LICENSE', 'Makefile' ]
         # Ignore images, documents, etc
         # very arbitrary, ad-hoc list
         self.ignoreSuffixes = ignoreSuffixes.split(",") if ignoreSuffixes \
             else [ '.png', '.svg', '.jpg', '.jpeg',
-                         '.md', '.txt', '.doc' ]
+                         '.md', '.txt', '.doc', 'xls', '.ppt', '.odt' ]
 
         # Add first element false for functools.reduce
         self.ignorePrefixes = [ False ] + self.ignorePrefixes
