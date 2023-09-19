@@ -32,11 +32,13 @@ class Ignores:
 class DirPrinter:
     def __init__(self, path, maxlevel : int,
                  ignorePrefixes: str, ignoreSuffixes: str,
-                 textonly: bool):
+                 textonly: bool,
+                 noleaves: bool):
         self.maxlevel = maxlevel
         self.fullpath = os.path.abspath(path)
         self.ignores = Ignores(ignorePrefixes, ignoreSuffixes)
         self.textonly = textonly
+        self.noleaves = noleaves
 
     def printElement(self, element, stars, isDirectory):
 
@@ -63,7 +65,7 @@ class DirPrinter:
             if os.path.isdir(fullpath):
                 self.printElement(child, level+1, True)
                 self.printDir(fullpath, level+1)
-            else:
+            elif not self.noleaves:
                 self.printElement(child, level+1, False)
 
 if __name__ == "__main__":
@@ -75,11 +77,13 @@ if __name__ == "__main__":
     parser.add_argument('-s', "--ignoresuffix", default=None)
     parser.add_argument('-l', "--maxlevel", default=0, type=int)
     parser.add_argument('-t', "--textonly", action='store_true')
+    parser.add_argument("--noleaves", action='store_true')
     args = parser.parse_args()
     
     dirPrinter = DirPrinter(args.directory,
                             args.maxlevel,
                             args.ignoreprefix,
                             args.ignoresuffix,
-                            args.textonly)
+                            args.textonly,
+                            args.noleaves)
     dirPrinter.print()
